@@ -104,3 +104,5 @@ export class GloriaSandbox extends Sandbox {
     })
   }
 }
+
+export default GloriaSandbox

@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["Sandbox"] = factory();
+		exports["GloriaSandbox"] = factory();
 	else
-		root["Sandbox"] = factory();
+		root["GloriaSandbox"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -9254,6 +9254,8 @@ var GloriaSandbox = function (_Sandbox) {
 
   return GloriaSandbox;
 }(__WEBPACK_IMPORTED_MODULE_9_worker_sandbox__["a" /* default */]);
+
+/* harmony default export */ __webpack_exports__["default"] = GloriaSandbox;
 
 /***/ })
 /******/ ]);
