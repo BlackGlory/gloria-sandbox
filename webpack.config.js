@@ -18,6 +18,10 @@ module.exports = {
       {
         test: /\.js$/
       , use: 'babel-loader'
+      , include: [
+          path.resolve(__dirname, 'node_modules/worker-sandbox')
+        , path.resolve(__dirname, 'src')
+        ]
       }
     ]
   }
