@@ -7,21 +7,19 @@ module.exports = {
     'sandbox': './src/sandbox.js'
   , 'sandbox.min': './src/sandbox.js'
   }
+, devtool: 'source-map'
 , output: {
     path: path.resolve(__dirname, 'dist')
   , filename: '[name].js'
-  , library: 'GloriaSandbox'
+  , library: 'createGloriaSandbox'
   , libraryTarget: 'umd'
   }
 , module: {
     rules: [
       {
         test: /\.js$/
+      , exclude: /node_modules/
       , use: 'babel-loader'
-      , include: [
-          path.resolve(__dirname, 'node_modules/worker-sandbox')
-        , path.resolve(__dirname, 'src')
-        ]
       }
     ]
   }
