@@ -7,6 +7,25 @@ function getCookiesByUrl(url) {
   })
 }
 
+function setSessionStorage(url, data) {
+  let name = `request.inflate.${ url }`
+  try {
+    window.sessionStorage[name] = JSON.stringify(data)
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      window.sessionStorage.clear()
+      window.sessionStorage[name] = JSON.stringify(data)
+    } else {
+      console.error(e)
+    }
+  }
+}
+
+async function getCookies(url) {
+  let cookies = await getCookiesByUrl(url) || []
+  return cookies.map(x => `${ x.name }=${ x.value }`).join('; ')
+}
+
 export async function createGloriaSandbox() {
   let sandbox = new Sandbox()
 
@@ -15,29 +34,12 @@ export async function createGloriaSandbox() {
       options = Object.assign({
         headers: {}
       }, options)
+      options.headers['send-by'] = 'Gloria'
 
-      return getCookies(url)
-      .then(cookies => {
-        data = { cookie: cookies }
-        if (options.headers['Cookie']) {
-          data.cookie = options.headers['Cookie']
-        }
-        if (options.headers['Origin']) {
-          data.origin = options.headers['Origin']
-        }
-        if (options.headers['Referer']) {
-          data.referer = options.headers['Referer']
-        }
-        return data
-      })
-      .then(data => setSessionStorage(url, data))
-      .then(() => {
-        options.headers['send-by'] = 'Gloria'
-        return self.fetch(url, options, ...args)
-      })
+      return $prepareFetch(url, options).then(() => self.fetch(url, options, ...args))
     }
   , importScripts(url) {
-      return importScript(url)
+      return $importScriptString(url)
       .then(script => {
         let window = self
         return eval.call(window, script)
@@ -45,27 +47,22 @@ export async function createGloriaSandbox() {
     }
   })
 
-  await sandbox.registerCall('getCookies', async url => {
-    let cookies = await getCookiesByUrl(url) || []
-    return cookies.map(x => `${ x.name }=${ x.value }`).join('; ')
-  })
-
-  await sandbox.registerCall('setSessionStorage', async (url, data) => {
-    let name = `request.inflate.${ url }`
-    try {
-      window.sessionStorage[name] = JSON.stringify(data)
-    } catch(e) {
-      if (e.name === 'QuotaExceededError') {
-        window.sessionStorage.clear()
-        window.sessionStorage[name] = JSON.stringify(data)
-      } else {
-        console.error(e)
-      }
+  await sandbox.registerCall('$prepareFetch', async (url, options) => {
+    let cookies = await getCookies(url)
+      , data = { cookie: cookies }
+    if (options.headers['Cookie']) {
+      data.cookie = options.headers['Cookie']
     }
-    return window.sessionStorage[name]
+    if (options.headers['Origin']) {
+      data.origin = options.headers['Origin']
+    }
+    if (options.headers['Referer']) {
+      data.referer = options.headers['Referer']
+    }
+    setSessionStorage(url, data)
   })
 
-  await sandbox.registerCall('importScript', async url => {
+  await sandbox.registerCall('$importScriptString', async url => {
     if (url === 'gloria-utils') {
       return GloriaUtils
     } else {
