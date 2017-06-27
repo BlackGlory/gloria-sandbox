@@ -1,6 +1,5 @@
 import GloriaUtils from 'raw-loader!gloria-utils'
 import Sandbox from 'worker-sandbox'
-import * as GloriaNotificationValidator from 'gloria-notification-validator'
 
 function getCookiesByUrl(url) {
   return new Promise((resolve, reject) => {
@@ -98,31 +97,22 @@ export async function createGloriaSandbox() {
     }
   })
 
-  let committed = false
-
-  function commit(data) {
-    if (committed) {
-      return
-    } else {
+  const commit = (() => {
+    let committed = false
+    return data => {
+      if (committed) {
+        return
+      }
       committed = true
+      setTimeout(() => {
+        sandbox.dispatchEvent(new CustomEvent('commit', {
+          detail: data
+        }))
+      })
     }
-    setTimeout(() => {
-      sandbox.dispatchEvent(new CustomEvent('commit', {
-        detail: data
-      }))
-    })
-  }
+  })()
 
   await sandbox.registerCall('commit', commit)
-
-  const originalEval = sandbox.eval.bind(sandbox)
-  sandbox.eval = async function(...args) {
-    const data = await originalEval(...args)
-    if (GloriaNotificationValidator.isValid(data)) {
-      commit(data)
-    }
-    return data
-  }
 
   return sandbox
 }

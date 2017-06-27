@@ -9,5 +9,6 @@
     ["transform-runtime", {
       "polyfill": false
     }]
+  , ["babel-plugin-transform-builtin-extend", { "globals": ["Error"] }]
   ]
 }
