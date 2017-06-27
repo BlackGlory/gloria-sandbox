@@ -1397,9 +1397,9 @@ gloria-notification-validator@^1.0.1:
   dependencies:
     joi-browser "^10.0.6"
 
-gloria-utils@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/gloria-utils/-/gloria-utils-1.5.1.tgz#7d308f188f46c50945e673fa2c9df0db9d2b9c20"
+gloria-utils@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/gloria-utils/-/gloria-utils-1.5.2.tgz#aa1902470ed0ae075c8d726cae63d565b093436b"
   dependencies:
     cheerio "^0.22.0"
     co "^4.6.0"
