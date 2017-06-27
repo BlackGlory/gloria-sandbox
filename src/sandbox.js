@@ -98,23 +98,28 @@ export async function createGloriaSandbox() {
     }
   })
 
-  await sandbox.registerCall('commit', data => {
+  let committed = false
+
+  function commit(data) {
+    if (committed) {
+      return
+    } else {
+      committed = true
+    }
     setTimeout(() => {
       sandbox.dispatchEvent(new CustomEvent('commit', {
         detail: data
       }))
     })
-  })
+  }
+
+  await sandbox.registerCall('commit', commit)
 
   const originalEval = sandbox.eval.bind(sandbox)
   sandbox.eval = async function(...args) {
     const data = await originalEval(...args)
     if (GloriaNotificationValidator.isValid(data)) {
-      setTimeout(() => {
-        sandbox.dispatchEvent(new CustomEvent('commit', {
-          detail: data
-        }))
-      })
+      commit(data)
     }
     return data
   }

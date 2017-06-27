@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "gloria-notification-validator": "^1.0.1",
-    "gloria-utils": "^1.5.2",
+    "gloria-utils": "^1.5.3",
     "worker-sandbox": "^0.1.7"
   }
 }
