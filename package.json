@@ -1,6 +1,6 @@
 {
   "name": "gloria-sandbox",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "main": "dist/sandbox.js",
   "module": "src/sandbox.js",
   "repository": "git@github.com:BlackGlory/gloria-sandbox.git",
