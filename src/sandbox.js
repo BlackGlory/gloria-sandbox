@@ -108,7 +108,7 @@ export async function createGloriaSandbox() {
 
   const originalEval = sandbox.eval.bind(sandbox)
   sandbox.eval = async function(...args) {
-    let data = await originalEval(...args)
+    const data = await originalEval(...args)
     if (GloriaNotificationValidator.isValid(data)) {
       setTimeout(() => {
         sandbox.dispatchEvent(new CustomEvent('commit', {
@@ -116,7 +116,7 @@ export async function createGloriaSandbox() {
         }))
       })
     }
-    return result
+    return data
   }
 
   return sandbox
