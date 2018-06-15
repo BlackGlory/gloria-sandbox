@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "esnext"
+  , "target": "esnext"
+  , "moduleResolution": "node"
+  , "lib": [
+      "esnext"
+    , "webworker"
+    ]
+  , "strict": true
+  , "removeComments": false
+  , "sourceMap": true
+  , "declaration": true
+  , "alwaysStrict": true
+  }
+}

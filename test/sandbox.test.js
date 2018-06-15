@@ -1,55 +1,37 @@
-'use strict'
+import * as expect from 'expect'
+import { GloriaSandbox } from '../src/sandbox'
 
-import { expect } from 'chai'
-import createGloriaSandbox from '../src/sandbox'
-
-describe('GloriaSandbox', function() {
+describe('GloriaSandbox', () => {
   it('commit', () => new Promise(async (resolve, reject) => {
-    const sandbox = await createGloriaSandbox()
-    sandbox.addEventListener('error', ({ detail }) => reject(detail))
-    sandbox.addEventListener('commit', ({ detail }) => {
-      expect(detail).to.deep.equal({
+    const sandbox = await new GloriaSandbox()
+  
+    sandbox.once('commit', data => {
+      expect(data).toEqual({
         title: 'title'
       , message: 'message'
       })
       resolve()
     })
+
     await sandbox.execute(`
       commit({
         title: 'title'
       , message: 'message'
       })
-    `, 1000 * 60)
+    `)
   }))
 
-  it('importScripts', () => new Promise(async (resolve, reject) => {
-    const sandbox = await createGloriaSandbox()
-    sandbox.addEventListener('error', ({ detail }) => reject(detail))
-    sandbox.addEventListener('commit', ({ detail }) => {
-      expect(detail).to.deep.equal([
-        'cheerio'
-      , 'lodash'
-      , 'moment'
-      , 'validator'
-      , 'xml2js'
-      , 'qs'
-      , 'ramda'
-      , 'rx'
-      , 'cookie'
-      , 'sanitizeHtml'
-      , 'underscoreString'
-      , 'XRegExp'
-      , 'is'
-      , 'co'
-      , 'immutable'
-      ])
-      resolve()
-    })
-    await sandbox.execute(`
-      (async function() {
-        const utils = await importScripts('gloria-utils')
-        commit(Object.keys(utils))
+  it('importScripts', async () => {
+    const sandbox = await new GloriaSandbox()
+
+    const result = await sandbox.eval(`
+      (async () => {
+        const cheerio = await importScripts('gloria-utils/cheerio')
+        const $ = cheerio.load('<main>Hello World</main>')
+        return $('main').text()
       })()
-    `, 1000 * 60)
-  }))
+    `)
+
+    expect(result).toEqual('Hello World')
+  })
 })
